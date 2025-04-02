@@ -28,6 +28,7 @@ body{
   background-color: rgb(51, 232, 208);
   margin-left: 20px;
   margin-bottom: 10px;
+  padding: auto;
 }
 .todo-list-container .list-item-container  {
   list-style: none;
