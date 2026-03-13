@@ -5,7 +5,7 @@ export const ClearCompleted = ({ clearCompleted }: ClearCompletedProps) => {
   return (
     <div>
       <button className="clear-btn" onClick={clearCompleted}>
-        Clear Completed
+        🗑️ Clear Completed
       </button>
     </div>
   );

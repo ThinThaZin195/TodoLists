@@ -9,10 +9,10 @@ export const CheckLists = ({
   return (
     <div className="check-container">
       <button className="check-btn" onClick={checkAllTodo}>
-        Check All
+        ✓ Check All
       </button>
       <p className="reamin-display">
-        {remainingCount} item{remainingCount > 1 ? "s" : ""} remaining
+        {remainingCount} item{remainingCount !== 1 ? "s" : ""} remaining
       </p>
     </div>
   );

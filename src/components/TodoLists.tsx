@@ -4,6 +4,10 @@ interface Todo {
   id: string;
   title: string;
   completed: boolean;
+  category?: string;
+  priority?: 'low' | 'medium' | 'high';
+  dueDate?: string;
+  createdAt: string;
 }
 
 interface TodoListsProps {
@@ -25,25 +29,44 @@ export const TodoLists = ({
   const updateTodoHandler = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingTodoId !== null) {
+      const originalTodo = todos.find((todo) => todo.id === editingTodoId);
       const updatedTodo = {
-        id: editingTodoId,
+        ...originalTodo!,
         title: editTitle,
-        completed:
-          todos.find((todo) => todo.id === editingTodoId)?.completed || false,
       };
       updateTodo(updatedTodo);
     }
 
     setEditingTodoId(null);
-    setEditTitle(""); //
+    setEditTitle("");
   };
 
   const handleEdit = (todoId: string, title: string) => {
-    setEditingTodoId(todoId); // Set the todo being edited
-    setEditTitle(title); // Set the title as the initial edit state
+    setEditingTodoId(todoId);
+    setEditTitle(title);
   };
+
   const toggleTodoCompletion = (todo: Todo) => {
     updateTodo({ ...todo, completed: !todo.completed });
+  };
+
+  const getPriorityColor = (priority?: string) => {
+    switch (priority) {
+      case 'high': return '#ff6b6b';
+      case 'medium': return '#ffa726';
+      case 'low': return '#66bb6a';
+      default: return '#666';
+    }
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const isOverdue = (dueDate?: string) => {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date() && !todos.find(t => t.dueDate === dueDate)?.completed;
   };
 
   return (
@@ -51,7 +74,7 @@ export const TodoLists = ({
       <div>
         <ul className="todo-list-container">
           {todos.map((todo) => (
-            <li className="list-item-container" key={todo.id}>
+            <li className={`list-item-container ${isOverdue(todo.dueDate) ? 'overdue' : ''}`} key={todo.id}>
               <div className="list-items">
                 <input
                   type="checkbox"
@@ -59,30 +82,50 @@ export const TodoLists = ({
                   onChange={() => toggleTodoCompletion(todo)}
                 />
 
-                {/* If the todo is not being edited, show the title */}
-                {editingTodoId !== todo.id ? (
-                  <span
-                    className={`list-item-label ${
-                      todo.completed ? "line-through" : ""
-                    }`}
-                    onDoubleClick={() => handleEdit(todo.id, todo.title)} // Trigger edit mode for the selected todo
-                  >
-                    {todo.title}
-                  </span>
-                ) : (
-                  // If the todo is being edited, show an input box with the current title
-                  <form onSubmit={updateTodoHandler}>
-                    <input
-                      type="text"
-                      value={editTitle} // The value of the input is the current todo's title
-                      onChange={(e) => setEditTitle(e.target.value)} // Update the title while typing
-                    />
-                  </form>
-                )}
-
-                
+                <div className="todo-content">
+                  {editingTodoId !== todo.id ? (
+                    <div>
+                      <span
+                        className={`list-item-label ${
+                          todo.completed ? "line-through" : ""
+                        }`}
+                        onDoubleClick={() => handleEdit(todo.id, todo.title)}
+                      >
+                        {todo.title}
+                      </span>
+                      <div className="todo-meta">
+                        {todo.category && (
+                          <span className="todo-category">{todo.category}</span>
+                        )}
+                        {todo.priority && (
+                          <span
+                            className="todo-priority"
+                            style={{ color: getPriorityColor(todo.priority) }}
+                          >
+                            {todo.priority.toUpperCase()}
+                          </span>
+                        )}
+                        {todo.dueDate && (
+                          <span className={`todo-due-date ${isOverdue(todo.dueDate) ? 'overdue-text' : ''}`}>
+                            📅 {formatDate(todo.dueDate)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <form onSubmit={updateTodoHandler}>
+                      <input
+                        type="text"
+                        className="edit-input"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        autoFocus
+                      />
+                    </form>
+                  )}
+                </div>
               </div>
-              <button onClick={() => deleteTodo(todo.id)}>delete</button>
+              <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>🗑️</button>
             </li>
           ))}
         </ul>

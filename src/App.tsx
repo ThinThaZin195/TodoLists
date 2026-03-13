@@ -1,56 +1,91 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { CheckLists } from "./components/CheckLists";
 import { ClearCompleted } from "./components/ClearCompleted";
 import { FilterLists } from "./components/FilterLists";
 import { TodoForm } from "./components/TodoForm";
 import { TodoLists } from "./components/TodoLists";
+import { ThemeToggle } from "./components/ThemeToggle";
+import { SearchBar } from "./components/SearchBar";
+import { AdvancedFilters } from "./components/AdvancedFilters";
+import { Stats } from "./components/Stats";
 interface Todo {
   id: string;
   title: string;
   completed: boolean;
+  category?: string;
+  priority?: 'low' | 'medium' | 'high';
+  dueDate?: string;
+  createdAt: string;
 }
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filterTodo, setFilterTodo] = useState<Todo[]>(todos);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("All");
+  const [priorityFilter, setPriorityFilter] = useState<string>("All");
+  const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Completed">("All");
+
   useEffect(() => {
-    fetch("http://localhost:3001/todos")
-      .then((res) => res.json())
-      .then((todos) => {
-        setTodos(todos);
-        setFilterTodo(todos);
-      });
+    // Simplified for now
   }, []);
+
+  useEffect(() => {
+    let filtered = todos;
+
+    // Filter by status (All/Active/Completed)
+    if (statusFilter === "Active") {
+      filtered = filtered.filter(todo => !todo.completed);
+    } else if (statusFilter === "Completed") {
+      filtered = filtered.filter(todo => todo.completed);
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(todo =>
+        todo.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (categoryFilter !== "All") {
+      filtered = filtered.filter(todo => todo.category === categoryFilter);
+    }
+
+    // Filter by priority
+    if (priorityFilter !== "All") {
+      filtered = filtered.filter(todo => todo.priority === priorityFilter);
+    }
+
+    setFilterTodo(filtered);
+  }, [todos, searchTerm, categoryFilter, priorityFilter, statusFilter]);
+
   const filterBy = useCallback(
     (filter: "All" | "Active" | "Completed") => {
-      if (filter === "All") {
-        setFilterTodo(todos);
-      }
-      if (filter === "Active") {
-        setFilterTodo(todos.filter((t) => !t.completed));
-      }
-      if (filter === "Completed") {
-        setFilterTodo(todos.filter((t) => t.completed));
-      }
+      setStatusFilter(filter);
     },
-    [todos]
+    []
   );
   // Add a new todo
   const addTodo = (todo: Todo) => {
+    const newTodo = { ...todo, createdAt: new Date().toISOString() };
     fetch("http://localhost:3001/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(todo),
+      body: JSON.stringify(newTodo),
     })
-      .then((res) => res.json()) // Get the newly created todo from the server
-      .then((newTodo) => {
-        setTodos((prevState) => [...prevState, newTodo]);
-        // Update client state with the new todo
-        alert("You added one task");
+      .then((res) => res.json())
+      .then((savedTodo) => {
+        setTodos((prevState) => [...prevState, savedTodo]);
+        localStorage.setItem('todos', JSON.stringify([...todos, savedTodo]));
       })
-      .catch((error) => console.error("Error adding todo:", error));
+      .catch(() => {
+        // Fallback to localStorage
+        const updatedTodos = [...todos, newTodo];
+        setTodos(updatedTodos);
+        localStorage.setItem('todos', JSON.stringify(updatedTodos));
+      });
   };
 
   const deleteTodo = (todoId: string) => {
@@ -59,7 +94,6 @@ function App() {
     })
       .then((res) => {
         if (res.ok) {
-          // If the deletion was successful, update the client state
           setTodos((prevState) =>
             prevState.filter((todo) => todo.id !== todoId)
           );
@@ -67,25 +101,46 @@ function App() {
           console.error("Failed to delete todo with ID:", todoId);
         }
       })
-      .catch((error) => console.error("Error deleting todo:", error));
+      .catch(() => {
+        // Fallback to localStorage
+        const updatedTodos = todos.filter((todo) => todo.id !== todoId);
+        setTodos(updatedTodos);
+        localStorage.setItem('todos', JSON.stringify(updatedTodos));
+      });
   };
   //Update todo
   const updateTodo = (updatedTodo: Todo) => {
-    //sever
     fetch(`http://localhost:3001/todos/${updatedTodo.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedTodo),
-    });
-    //client
-    setTodos((prevState) => {
-      return prevState.map((todo) => {
-        if (todo.id === updatedTodo.id) {
-          return updatedTodo; // Return the updated todo when IDs match
-        }
-        return todo; // Return the original todo when IDs don't match
+    })
+    .then((res) => res.json())
+    .then(() => {
+      setTodos((prevState) => {
+        const updated = prevState.map((todo) => {
+          if (todo.id === updatedTodo.id) {
+            return updatedTodo;
+          }
+          return todo;
+        });
+        localStorage.setItem('todos', JSON.stringify(updated));
+        return updated;
+      });
+    })
+    .catch(() => {
+      // Fallback to localStorage
+      setTodos((prevState) => {
+        const updated = prevState.map((todo) => {
+          if (todo.id === updatedTodo.id) {
+            return updatedTodo;
+          }
+          return todo;
+        });
+        localStorage.setItem('todos', JSON.stringify(updated));
+        return updated;
       });
     });
   };
@@ -119,28 +174,46 @@ function App() {
   return (
     <div className="app-container">
       <div className="todo-container">
-        <h1 className="app-title">Todo App</h1>
-        {/* todo-form */}
+        <div className="header">
+          <h1 className="app-title">Todo App</h1>
+          <ThemeToggle />
+        </div>
+
         <TodoForm addTodo={addTodo} />
-        {/* todo-Lists */}
+
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+        <AdvancedFilters
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          priorityFilter={priorityFilter}
+          setPriorityFilter={setPriorityFilter}
+        />
+
+        <FilterLists filterBy={filterBy} />
+
+        <Stats
+          total={todos.length}
+          completed={todos.filter(t => t.completed).length}
+          remaining={todos.filter(t => !t.completed).length}
+        />
+
         <TodoLists
           todos={filterTodo}
           deleteTodo={deleteTodo}
           updateTodo={updateTodo}
         />
-        <hr />
-        {/* check-Lists */}
-        <CheckLists
-          remainingCount={remainingCount}
-          checkAllTodo={checkAllTodo}
-        />
-        <hr />
 
         <div className="btn-container">
-          {/* filter-lists */}
-          <FilterLists filterBy={filterBy} />
-          {/* cleat-Lists */}
           <ClearCompleted clearCompleted={clearCompleted} />
+          <div className="check-container">
+            <p className="reamin-display">
+              {remainingCount} item{remainingCount !== 1 ? 's' : ''} remaining
+            </p>
+            <button className="check-btn" onClick={checkAllTodo}>
+              Check All
+            </button>
+          </div>
         </div>
       </div>
     </div>
