@@ -1,25 +1,36 @@
-# Todo App
+# Advanced Todo App
 
-A modern, responsive Todo application built with React, TypeScript, and Vite. Features a beautiful gradient UI with full CRUD operations, filtering, and local persistence via JSON Server.
+A modern, feature-rich Todo application built with React, TypeScript, and Vite. Features a beautiful gradient UI with full CRUD operations, advanced filtering, search functionality, statistics, and theme switching.
 
 ## Features
 
-- ✅ Add new todos
-- ✅ Mark todos as complete/incomplete
-- ✅ Edit todos by double-clicking
-- ✅ Delete individual todos
-- ✅ Check all todos at once
-- ✅ Clear completed todos
-- ✅ Filter by All/Active/Completed
-- ✅ Responsive design
-- ✅ Modern gradient UI with smooth animations
+### Core Functionality
+- Add new todos with title, category, priority, and due date
+- Mark todos as complete/incomplete with visual feedback
+- Edit todos by double-clicking on the text
+- Delete individual todos
+- Bulk operations: Check all todos or clear completed ones
+
+### Advanced Features
+- Real-time search through all todos
+- Advanced filtering by category, priority, and status
+- Live statistics with progress tracking
+- Dark/Light theme toggle with smooth transitions
+- Fully responsive design for all devices
+
+### User Experience
+- Modern gradient UI with smooth animations
+- Fast performance with optimized React patterns
+- Persistent storage via JSON Server API
+- Intuitive interactions with hover effects and transitions
+- Due date tracking with overdue highlighting
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (v16 or higher)
-- npm or yarn
+- npm or yarn package manager
 
 ### Installation
 
@@ -38,99 +49,149 @@ npm install
 ```bash
 npm run server
 ```
-This will start the mock API server on `http://localhost:3001`
+This starts the mock API server on `http://localhost:3001`
 
-4. In a new terminal, start the development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
-This will start the React app on `http://localhost:5173`
+This starts the React app on `http://localhost:5173`
 
-### Usage
+### Usage Guide
 
-- **Add Todo**: Type in the input field and click the + button or press Enter
-- **Complete Todo**: Click the checkbox next to a todo
-- **Edit Todo**: Double-click on the todo text to edit it
-- **Delete Todo**: Click the trash icon next to a todo
-- **Check All**: Click "Check All" to mark all todos as complete
-- **Filter**: Use the All/Active/Completed buttons to filter todos
-- **Clear Completed**: Click "Clear Completed" to remove all completed todos
+#### Adding Todos
+- Type your task in the input field
+- Select a category (Work, Personal, Shopping, Health, Education)
+- Choose priority level (Low, Medium, High)
+- Set a due date (optional)
+- Click "Add Todo" or press Enter
+
+#### Managing Todos
+- Complete: Click the checkbox next to any todo
+- Edit: Double-click on todo text to edit inline
+- Delete: Click the trash icon next to a todo
+- Bulk Actions: Use "Check All" or "Clear Completed" buttons
+
+#### Filtering & Search
+- Status Filter: All / Active / Completed buttons
+- Advanced Filters: Filter by category and priority
+- Search: Type in the search bar to find todos instantly
+
+#### Statistics
+- Total: Total number of todos
+- Completed: Number of finished tasks
+- Remaining: Number of pending tasks
+- Progress: Visual progress bar with completion percentage
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Vite
-- **Backend**: JSON Server (for development)
-- **Styling**: CSS with modern design patterns
-- **Icons**: Unicode emojis for a clean, lightweight approach
+### Frontend
+- React 19 - Modern React with hooks and concurrent features
+- TypeScript - Type-safe JavaScript for better development experience
+- Vite - Fast build tool and development server
+- CSS3 - Modern styling with CSS variables and animations
 
-## Scripts
+### Backend (Development)
+- JSON Server - Mock REST API for development
+- RESTful API - Standard HTTP methods for CRUD operations
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run server` - Start JSON Server
-- `npm run lint` - Run ESLint
+### Development Tools
+- ESLint - Code linting and formatting
+- Vite - Fast development and build tooling
+- TypeScript - Type checking and IntelliSense
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── CheckLists.tsx
-│   ├── ClearCompleted.tsx
-│   ├── FilterLists.tsx
-│   ├── TodoForm.tsx
-│   └── TodoLists.tsx
-├── data/
-│   └── data.json
-├── App.tsx
-├── App.css
-├── index.css
-└── main.tsx
+my-todo-app/
+├── public/
+│   └── vite.svg
+├── src/
+│   ├── components/
+│   │   ├── AdvancedFilters.tsx    # Category & priority filters
+│   │   ├── ClearCompleted.tsx     # Clear completed todos
+│   │   ├── FilterLists.tsx        # Status filters (All/Active/Completed)
+│   │   ├── SearchBar.tsx          # Search functionality
+│   │   ├── Stats.tsx              # Statistics display
+│   │   ├── ThemeToggle.tsx        # Dark/light theme switcher
+│   │   ├── TodoForm.tsx           # Add new todo form
+│   │   └── TodoLists.tsx          # Todo list display & management
+│   ├── contexts/
+│   │   └── ThemeContext.tsx       # Theme management
+│   ├── data/
+│   │   └── data.json              # Sample data
+│   ├── App.tsx                    # Main application component
+│   ├── App.css                    # Main styles
+│   ├── index.css                  # Global styles
+│   └── main.tsx                   # Application entry point
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
 ```
+
+## Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server
+npm run server       # Start JSON Server (backend)
+
+# Production
+npm run build        # Build for production
+npm run preview      # Preview production build
+
+# Code Quality
+npm run lint         # Run ESLint
+```
+
+## Design Features
+
+### Color Scheme
+- Light Theme: Clean whites and grays with blue accents
+- Dark Theme: Deep blues and grays for comfortable night use
+- Semantic Colors: Success (green), warning (orange), error (red)
+
+### Animations
+- Fade-in animations for smooth page loads
+- Slide-in effects for todo items
+- Hover transitions for interactive elements
+- Theme transitions for smooth mode switching
+
+### Responsive Design
+- Mobile-first approach with breakpoints
+- Flexible layouts that adapt to screen sizes
+- Touch-friendly buttons and interactions
 
 ## Contributing
 
+We welcome contributions! Please follow these steps:
+
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -m 'Add amazing feature'`
+5. Push to the branch: `git push origin feature/amazing-feature`
+6. Open a Pull Request
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Write meaningful commit messages
+- Test your changes on multiple devices
+- Ensure responsive design works properly
+- Maintain code quality with ESLint
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Acknowledgments
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React Team for the amazing framework
+- Vite for the lightning-fast build tool
+- JSON Server for the simple mock API solution
+- Open source community for inspiration and tools
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---
+
+Made with React, TypeScript, and modern web technologies
